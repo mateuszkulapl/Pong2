@@ -59,7 +59,7 @@ namespace Pong2
             lPad = new Paddle(lPadTexture, GraphicsDevice.Viewport, Side.Left, Keys.Q, Keys.A);
             rPad = new Paddle(rPadTexture, GraphicsDevice.Viewport, Side.Right, Keys.P, Keys.L);
 
-            ball = new Ball(ballTexture, GraphicsDevice.Viewport,new Point(16,5));
+            ball = new Ball(ballTexture, GraphicsDevice.Viewport,new Point(16,5), explosion, new Point(5, 5));
         }
 
         protected override void Update(GameTime gameTime)

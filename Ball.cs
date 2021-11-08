@@ -7,18 +7,25 @@ namespace Pong2
 {
     public class Ball
     {
-
         Texture2D texture;
         Vector2 position;
         Vector2 speed;
         Viewport graphicViewport;
         float r;
         Point sheetSize;
+       
         Point frameSize;
         Point currentFrame;
         Vector2 ballMargin;
 
-        public Ball(Texture2D texture, Viewport graphicViewport, Point sheetSize)
+        Texture2D explosion;
+        Point explosionCurrentFrame;
+        Point explosionSheetSize;
+        Point explosionFrameSize;
+        bool explosionStarted = false;
+        bool explosionFinished = false;
+
+        public Ball(Texture2D texture, Viewport graphicViewport, Point ballSheetSize,Texture2D explosionTexture, Point explosionSheetSize)
         {
             this.texture = texture;
             this.speed = new Vector2(0, 0);
@@ -26,37 +33,76 @@ namespace Pong2
 
             this.position = new Vector2((int)graphicViewport.Width / 2, (int)graphicViewport.Height / 2);
             this.r = 20;
-            this.sheetSize = sheetSize;
+            this.sheetSize = ballSheetSize;
             this.frameSize = new Point(texture.Width / sheetSize.X, texture.Height / sheetSize.Y);
-            this.currentFrame = new Point(0, 0);
+            this.currentFrame=new Point(0,0);
             this.ballMargin = new Vector2(frameSize.X / 5, frameSize.Y / 5);
+
+
+            //explosion
+            this.explosion = explosionTexture;
+            this.explosionSheetSize = explosionSheetSize;
+            this.explosionFrameSize = new Point(explosionTexture.Width / explosionSheetSize.X, explosionTexture.Height / explosionSheetSize.Y);
+            this.explosionCurrentFrame = new Point(0, 0);
         }
 
         public void nextFrame()
         {
             currentFrame.X++;
-            if (currentFrame.X > sheetSize.X - 1)
+            if(currentFrame.X>sheetSize.X-1)
             {
                 currentFrame.X = 0;
                 currentFrame.Y++;
             }
             else
-            if (currentFrame.Y == 4 && currentFrame.X == 6)
+            if (currentFrame.Y ==4&& currentFrame.X==6)
             {
-                currentFrame.Y = 0;
                 currentFrame.X = 0;
+                currentFrame.Y = 0;
             }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Is explosion animation ended</returns>
+        public bool explosionNextFrame()
+        {
+            explosionCurrentFrame.X++;
+            if (explosionCurrentFrame.X > explosionSheetSize.X - 1)
+            {
+                explosionCurrentFrame.X = 0;
+                explosionCurrentFrame.Y++;
+                if (explosionCurrentFrame.Y==  explosionSheetSize.X - 1)
+                {
+                    explosionFinished = true;
+                    return true;
+                }
+            }
+            return false;
         }
 
         internal void Draw(SpriteBatch spriteBatch)
         {
             Rectangle screenPosition = new Rectangle((int)(position.X - r), (int)(position.Y - r), (int)(2 * r), (int)(2 * r));
-            Rectangle sourceRectangle = new Rectangle(currentFrame.X * frameSize.X, currentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y);
-            spriteBatch.Draw(texture, screenPosition, sourceRectangle, Color.White);
+
+            if (explosionStarted != true)
+            {
+                Rectangle sourceRectangle = new Rectangle(currentFrame.X * frameSize.X, currentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y);
+                spriteBatch.Draw(texture, screenPosition, sourceRectangle, Color.White);
+            }
+            else
+            {
+                if (explosionFinished == false && explosionNextFrame()==false)
+                {
+                    Rectangle sourceRectangle = new Rectangle(explosionCurrentFrame.X * explosionFrameSize.X, explosionCurrentFrame.Y * explosionFrameSize.Y, explosionFrameSize.X, explosionFrameSize.Y);
+                    spriteBatch.Draw(explosion, screenPosition, sourceRectangle, Color.White);
+                }
+            }
         }
 
         internal void Start(int xSpeed = 5)
         {
+
             Random rnd = new Random();
             int directionX = 1;
             if (rnd.Next(0, 2) == 1)
@@ -66,6 +112,9 @@ namespace Pong2
                 directionY = -1;
             this.speed = new Vector2((xSpeed * directionX), (xSpeed / 2 * directionY));
             this.position = new Vector2((int)graphicViewport.Width / 2, (int)graphicViewport.Height / 2);
+
+            explosionStarted = false;
+            explosionFinished = false;
         }
         /// <summary>
         /// Stop ball
@@ -101,13 +150,13 @@ namespace Pong2
 
         private void checkScreenCollision()
         {
-            Vector2 downPosition = position + new Vector2(0, r) - ballMargin;
+            Vector2 downPosition = position + new Vector2(0, r)- ballMargin;
             if (downPosition.Y >= graphicViewport.Height)
             {
                 speed.Y *= -1;
                 this.position.Y = this.position.Y - 2 * (downPosition.Y - graphicViewport.Height);
             }
-            Vector2 upPosition = position + new Vector2(0, -r) - ballMargin;
+            Vector2 upPosition = position + new Vector2(0, -r)- ballMargin;
             if (upPosition.Y <= 0)
             {
                 speed.Y *= -1;
@@ -125,7 +174,7 @@ namespace Pong2
             if (CheckPaddleBounce(oldPosition, paddle))
             {
                 speed.X *= -1.05f;
-                Console.WriteLine("speed: " + speed);
+                //Console.WriteLine("speed: " + speed);
             }
         }
 
@@ -140,6 +189,7 @@ namespace Pong2
             if (position.X > rPad.GetScreenPosition().X)
             {
                 lPad.AddPoints();
+                explode();
                 return true;
             }
             else
@@ -147,13 +197,18 @@ namespace Pong2
                 if (position.X < lPad.GetScreenPosition().X + rPad.GetScreenPosition().Width)
                 {
                     rPad.AddPoints();
+                    explode();
                     return true;
                 }
             }
             return false;
         }
 
-
+        internal void explode()
+        {
+            this.explosionStarted = true;
+            this.explosionCurrentFrame = new Point(0, 0);
+        }
 
         public bool CheckPaddleBounce(Vector2 oldPosition, Paddle paddle)
         {
@@ -176,7 +231,7 @@ namespace Pong2
 
             if (paddle.GetSide() == Side.Right)
             {
-                if (position.X + r - ballMargin.X >= paddle.GetScreenPosition().X)
+                if (position.X + r- ballMargin.X >= paddle.GetScreenPosition().X)
                 {
                     float ballPaddleDistance = paddle.GetScreenPosition().X - oldPosition.X;
                     float onPaddleY = oldPosition.Y + yOffset * (ballPaddleDistance / xOffset);
