@@ -28,20 +28,20 @@ namespace Pong2
             this.r = 20;
             this.sheetSize = sheetSize;
             this.frameSize = new Point(texture.Width / sheetSize.X, texture.Height / sheetSize.Y);
-            this.currentFrame=new Point(0,0);
+            this.currentFrame = new Point(0, 0);
             this.ballMargin = new Vector2(frameSize.X / 5, frameSize.Y / 5);
         }
 
         public void nextFrame()
         {
             currentFrame.X++;
-            if(currentFrame.X>sheetSize.X-1)
+            if (currentFrame.X > sheetSize.X - 1)
             {
                 currentFrame.X = 0;
                 currentFrame.Y++;
             }
             else
-            if (currentFrame.Y ==4&& currentFrame.X==6)
+            if (currentFrame.Y == 4 && currentFrame.X == 6)
             {
                 currentFrame.Y = 0;
                 currentFrame.X = 0;
@@ -51,7 +51,7 @@ namespace Pong2
         internal void Draw(SpriteBatch spriteBatch)
         {
             Rectangle screenPosition = new Rectangle((int)(position.X - r), (int)(position.Y - r), (int)(2 * r), (int)(2 * r));
-            Rectangle sourceRectangle = new Rectangle(currentFrame.X*frameSize.X,currentFrame.Y*frameSize.Y,frameSize.X,frameSize.Y);
+            Rectangle sourceRectangle = new Rectangle(currentFrame.X * frameSize.X, currentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y);
             spriteBatch.Draw(texture, screenPosition, sourceRectangle, Color.White);
         }
 
@@ -101,13 +101,13 @@ namespace Pong2
 
         private void checkScreenCollision()
         {
-            Vector2 downPosition = position + new Vector2(0, r)- ballMargin;
+            Vector2 downPosition = position + new Vector2(0, r) - ballMargin;
             if (downPosition.Y >= graphicViewport.Height)
             {
                 speed.Y *= -1;
                 this.position.Y = this.position.Y - 2 * (downPosition.Y - graphicViewport.Height);
             }
-            Vector2 upPosition = position + new Vector2(0, -r)- ballMargin;
+            Vector2 upPosition = position + new Vector2(0, -r) - ballMargin;
             if (upPosition.Y <= 0)
             {
                 speed.Y *= -1;
@@ -176,7 +176,7 @@ namespace Pong2
 
             if (paddle.GetSide() == Side.Right)
             {
-                if (position.X + r- ballMargin.X >= paddle.GetScreenPosition().X)
+                if (position.X + r - ballMargin.X >= paddle.GetScreenPosition().X)
                 {
                     float ballPaddleDistance = paddle.GetScreenPosition().X - oldPosition.X;
                     float onPaddleY = oldPosition.Y + yOffset * (ballPaddleDistance / xOffset);

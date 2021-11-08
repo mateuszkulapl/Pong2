@@ -20,6 +20,7 @@ namespace Pong2
         Texture2D lPadTexture;
         Texture2D rPadTexture;
         Texture2D ballTexture;
+        Texture2D explosion;
         private SpriteFont font;
 
         private Paddle lPad;
@@ -49,7 +50,7 @@ namespace Pong2
 
             background = Content.Load<Texture2D>(@"pongBackground");
             ballTexture = Content.Load<Texture2D>(@"ball-anim");
-
+            explosion= Content.Load<Texture2D>(@"explosion64");
 
             lPadTexture = Content.Load<Texture2D>(@"paddle1");
             rPadTexture = Content.Load<Texture2D>(@"paddle2");
