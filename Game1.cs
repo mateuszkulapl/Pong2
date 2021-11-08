@@ -47,7 +47,8 @@ namespace Pong2
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             background = Content.Load<Texture2D>(@"pongBackground");
-            ballTexture = Content.Load<Texture2D>(@"pongBall");
+            ballTexture = Content.Load<Texture2D>(@"ball-anim");
+
 
             lPadTexture = Content.Load<Texture2D>(@"paddle1");
             rPadTexture = Content.Load<Texture2D>(@"paddle2");
@@ -56,7 +57,7 @@ namespace Pong2
             lPad = new Paddle(lPadTexture, GraphicsDevice.Viewport, Side.Left, Keys.Q, Keys.A);
             rPad = new Paddle(rPadTexture, GraphicsDevice.Viewport, Side.Right, Keys.P, Keys.L);
 
-            ball = new Ball(ballTexture, GraphicsDevice.Viewport);
+            ball = new Ball(ballTexture, GraphicsDevice.Viewport,new Point(16,5));
         }
 
         protected override void Update(GameTime gameTime)
