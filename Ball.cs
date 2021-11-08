@@ -32,7 +32,7 @@ namespace Pong2
             this.ballMargin = new Vector2(frameSize.X / 5, frameSize.Y / 5);
         }
 
-        internal void nextFrame()
+        public void nextFrame()
         {
             currentFrame.X++;
             if(currentFrame.X>sheetSize.X-1)
@@ -50,11 +50,9 @@ namespace Pong2
 
         internal void Draw(SpriteBatch spriteBatch)
         {
-            nextFrame();
             Rectangle screenPosition = new Rectangle((int)(position.X - r), (int)(position.Y - r), (int)(2 * r), (int)(2 * r));
             Rectangle sourceRectangle = new Rectangle(currentFrame.X*frameSize.X,currentFrame.Y*frameSize.Y,frameSize.X,frameSize.Y);
             spriteBatch.Draw(texture, screenPosition, sourceRectangle, Color.White);
-            //spriteBatch.Draw(texture, screenPosition, Color.White);
         }
 
         internal void Start(int xSpeed = 5)

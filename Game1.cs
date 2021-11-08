@@ -26,7 +26,8 @@ namespace Pong2
         private Paddle rPad;
         private Ball ball;
         bool active = false;
-
+        int timeSinceLastFrame = 0;
+        const int msPerFrame = 50;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -74,6 +75,12 @@ namespace Pong2
             }
             if (active)
             {
+                timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
+                if(timeSinceLastFrame>msPerFrame)
+                {
+                    timeSinceLastFrame -= msPerFrame;
+                    ball.nextFrame();
+                }
                 ball.Move(lPad, rPad);
                 rPad.CheckMove(kb);
                 lPad.CheckMove(kb);
