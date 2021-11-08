@@ -1,19 +1,38 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Pong2
 {
+    public enum Side
+    {
+        Left,
+        Right,
+    }
+
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        Texture2D background;
+        Texture2D lPadTexture;
+        Texture2D rPadTexture;
+        Texture2D ballTexture;
+        private SpriteFont font;
+
+        private Paddle lPad;
+        private Paddle rPad;
+        private Ball ball;
+        bool active = false;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
+            this.Window.AllowUserResizing = false;
         }
 
         protected override void Initialize()
@@ -27,26 +46,83 @@ namespace Pong2
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            background = Content.Load<Texture2D>(@"pongBackground");
+            ballTexture = Content.Load<Texture2D>(@"pongBall");
+
+            lPadTexture = Content.Load<Texture2D>(@"paddle1");
+            rPadTexture = Content.Load<Texture2D>(@"paddle2");
+            font = Content.Load<SpriteFont>("font1");
+
+            lPad = new Paddle(lPadTexture, GraphicsDevice.Viewport, Side.Left, Keys.Q, Keys.A);
+            rPad = new Paddle(rPadTexture, GraphicsDevice.Viewport, Side.Right, Keys.P, Keys.L);
+
+            ball = new Ball(ballTexture, GraphicsDevice.Viewport);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+
+            KeyboardState kb = Keyboard.GetState();
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || kb.IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            if (kb.IsKeyDown(Keys.Space) && active == false)
+            {
+                StartGame();
+            }
+            if (active)
+            {
+                ball.Move(lPad, rPad);
+                rPad.CheckMove(kb);
+                lPad.CheckMove(kb);
+            }
+
+            if (active == true && ball.IsEnd(lPad, rPad))
+            {
+                EndGame();
+            }
 
             base.Update(gameTime);
         }
 
+
+
+        private void StartGame()
+        {
+            active = true;
+            ball.Start();
+            rPad.Start();
+            lPad.Start();
+        }
+
+        private void EndGame()
+        {
+            active = false;
+            ball.End();
+            rPad.End();
+            lPad.End();
+        }
+
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(background, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
 
-            // TODO: Add your drawing code here
+            ball.Draw(_spriteBatch);
+            lPad.Draw(_spriteBatch);
+            rPad.Draw(_spriteBatch);
+            drawResult(_spriteBatch);
 
+            _spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void drawResult(SpriteBatch _spriteBatch)
+        {
+            string result = lPad.GetPoints() + ":" + rPad.GetPoints();
+            Vector2 resultSize = font.MeasureString(result);
+            _spriteBatch.DrawString(font, result, new Vector2(GraphicsDevice.Viewport.Width / 2 - resultSize.X / 2, 0), Color.White);
         }
     }
 }
