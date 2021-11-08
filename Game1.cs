@@ -50,7 +50,7 @@ namespace Pong2
 
             background = Content.Load<Texture2D>(@"pongBackground");
             ballTexture = Content.Load<Texture2D>(@"ball-anim");
-            explosion= Content.Load<Texture2D>(@"explosion64");
+            explosion = Content.Load<Texture2D>(@"explosion64");
 
             lPadTexture = Content.Load<Texture2D>(@"paddle1");
             rPadTexture = Content.Load<Texture2D>(@"paddle2");
@@ -59,7 +59,7 @@ namespace Pong2
             lPad = new Paddle(lPadTexture, GraphicsDevice.Viewport, Side.Left, Keys.Q, Keys.A);
             rPad = new Paddle(rPadTexture, GraphicsDevice.Viewport, Side.Right, Keys.P, Keys.L);
 
-            ball = new Ball(ballTexture, GraphicsDevice.Viewport,new Point(16,5), explosion, new Point(5, 5));
+            ball = new Ball(ballTexture, GraphicsDevice.Viewport, new Point(16, 5), explosion, new Point(5, 5));
         }
 
         protected override void Update(GameTime gameTime)
@@ -77,7 +77,7 @@ namespace Pong2
             if (active)
             {
                 timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
-                if(timeSinceLastFrame>msPerFrame)
+                if (timeSinceLastFrame > msPerFrame)
                 {
                     timeSinceLastFrame -= msPerFrame;
                     ball.nextFrame();

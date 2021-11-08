@@ -14,7 +14,6 @@ namespace Pong2
         int points;
         bool active;
 
-
         Keys upKey;
         Keys downKey;
         Viewport graphicViewport;
