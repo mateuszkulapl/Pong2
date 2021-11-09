@@ -65,20 +65,21 @@ namespace Pong2
         /// 
         /// </summary>
         /// <returns>Is explosion animation ended</returns>
-        public bool explosionNextFrame()
+        public void explosionNextFrame()
         {
-            explosionCurrentFrame.X++;
-            if (explosionCurrentFrame.X > explosionSheetSize.X - 1)
+            if (explosionStarted&&explosionFinished==false)
             {
-                explosionCurrentFrame.X = 0;
-                explosionCurrentFrame.Y++;
-                if (explosionCurrentFrame.Y == explosionSheetSize.X - 1)
+                explosionCurrentFrame.X++;
+                if (explosionCurrentFrame.X > explosionSheetSize.X - 1)
                 {
-                    explosionFinished = true;
-                    return true;
+                    explosionCurrentFrame.X = 0;
+                    explosionCurrentFrame.Y++;
+                    if (explosionCurrentFrame.Y == explosionSheetSize.X - 1)
+                    {
+                        explosionFinished = true;
+                    }
                 }
             }
-            return false;
         }
 
         internal void Draw(SpriteBatch spriteBatch)
@@ -92,12 +93,17 @@ namespace Pong2
             }
             else
             {
-                if (explosionFinished == false && explosionNextFrame() == false)
+                if (explosionFinished == false)
                 {
                     Rectangle sourceRectangle = new Rectangle(explosionCurrentFrame.X * explosionFrameSize.X, explosionCurrentFrame.Y * explosionFrameSize.Y, explosionFrameSize.X, explosionFrameSize.Y);
                     spriteBatch.Draw(explosion, screenPosition, sourceRectangle, Color.White);
                 }
             }
+        }
+
+        internal bool isExplosionStarted()
+        {
+            return explosionStarted;
         }
 
         internal void Start(int xSpeed = 5)
@@ -128,11 +134,11 @@ namespace Pong2
         /// </summary>
         /// <param name="l">left Paddle</param>
         /// <param name="r">right Paddle</param>
-        internal void Move(Paddle l, Paddle r)
+        internal void Move(Paddle l, Paddle r, TimeSpan totalGameTime)
         {
             Vector2 oldPosition = position;
             position += speed;
-            CheckCollision(l, r, oldPosition);
+            CheckCollision(l, r, oldPosition, totalGameTime);
 
         }
         /// <summary>
@@ -141,11 +147,11 @@ namespace Pong2
         /// <param name="l">left Paddle</param>
         /// <param name="r">right Paddle</param>
         /// <param name="oldPosition">last frame ball position</param>
-        private void CheckCollision(Paddle l, Paddle r, Vector2 oldPosition)
+        private void CheckCollision(Paddle l, Paddle r, Vector2 oldPosition, TimeSpan totalGameTime)
         {
             checkScreenCollision();
-            checkPaddleCollision(l, oldPosition);
-            checkPaddleCollision(r, oldPosition);
+            checkPaddleCollision(l, oldPosition,totalGameTime);
+            checkPaddleCollision(r, oldPosition,totalGameTime);
         }
 
         private void checkScreenCollision()
@@ -169,10 +175,11 @@ namespace Pong2
         /// </summary>
         /// <param name="paddle"></param>
         /// <param name="oldPosition"></param>
-        private void checkPaddleCollision(Paddle paddle, Vector2 oldPosition)
+        private void checkPaddleCollision(Paddle paddle, Vector2 oldPosition, TimeSpan totalGameTime)
         {
             if (CheckPaddleBounce(oldPosition, paddle))
             {
+                paddle.startBounceAnimation(totalGameTime);
                 speed.X *= -1.05f;
                 //Console.WriteLine("speed: " + speed);
             }
@@ -206,6 +213,7 @@ namespace Pong2
 
         internal void explode()
         {
+            //return;
             this.explosionStarted = true;
             this.explosionCurrentFrame = new Point(0, 0);
         }

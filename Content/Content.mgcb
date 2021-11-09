@@ -44,7 +44,7 @@
 /processorParam:TextureFormat=Compressed
 /build:File.spritefont;font1.spritefont
 
-#begin paddle1.png
+#begin paddle1a.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -54,9 +54,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:paddle1.png
+/build:paddle1a.png
 
-#begin paddle2.png
+#begin paddle2a.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -66,7 +66,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:paddle2.png
+/build:paddle2a.png
 
 #begin pongBackground.png
 /importer:TextureImporter

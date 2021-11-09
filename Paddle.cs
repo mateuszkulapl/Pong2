@@ -17,6 +17,9 @@ namespace Pong2
         Keys upKey;
         Keys downKey;
         Viewport graphicViewport;
+        bool bounced;
+        TimeSpan bounceAnimationStartTime;
+        int animationTime = 300;//miliseconds
 
         public Paddle(Texture2D texture, Viewport graphicViewport, Side side, Keys upKey, Keys downKey)
         {
@@ -49,6 +52,7 @@ namespace Pong2
         {
             resetPosition();
             this.active = true;
+            this.bounced = false;
 
         }
         public void End()
@@ -75,7 +79,10 @@ namespace Pong2
         }
         internal void Draw(SpriteBatch spriteBatch)
         {
+            if(this.bounced==false)
             spriteBatch.Draw(texture, screenPosition, Color.White);
+            else
+            spriteBatch.Draw(texture, screenPosition, Color.Yellow);
         }
 
         public void CheckMove(KeyboardState kb)
@@ -105,6 +112,18 @@ namespace Pong2
                 screenPosition.Offset(0, yOffset);
             else
                 screenPosition.Y = graphicViewport.Height - screenPosition.Height;
+        }
+        public void startBounceAnimation(TimeSpan totalGameTime)
+        {
+            this.bounced = true;
+            this.bounceAnimationStartTime = totalGameTime;
+            Console.WriteLine("animation started:");
+        }
+        public void checkEndBounceAnimation(TimeSpan totalGameTime)
+        {
+            Console.WriteLine("started "+ this.bounceAnimationStartTime.TotalMilliseconds+" current"+ totalGameTime.TotalMilliseconds+"  : ");
+            if (totalGameTime.TotalMilliseconds - this.bounceAnimationStartTime.TotalMilliseconds < animationTime)
+                this.bounced = false;
         }
 
     }

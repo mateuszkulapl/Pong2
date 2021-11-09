@@ -27,8 +27,11 @@ namespace Pong2
         private Paddle rPad;
         private Ball ball;
         bool active = false;
-        int timeSinceLastFrame = 0;
-        const int msPerFrame = 50;
+        int ballTimeSinceLastFrame = 0;
+        const int ballMsPerFrame = 50;
+
+        int explosionTimeSinceLastFrame = 0;
+        const int explosionMsPerFrame = 50;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -52,8 +55,8 @@ namespace Pong2
             ballTexture = Content.Load<Texture2D>(@"ball-anim");
             explosion = Content.Load<Texture2D>(@"explosion64");
 
-            lPadTexture = Content.Load<Texture2D>(@"paddle1");
-            rPadTexture = Content.Load<Texture2D>(@"paddle2");
+            lPadTexture = Content.Load<Texture2D>(@"paddle1a");
+            rPadTexture = Content.Load<Texture2D>(@"paddle2a");
             font = Content.Load<SpriteFont>("font1");
 
             lPad = new Paddle(lPadTexture, GraphicsDevice.Viewport, Side.Left, Keys.Q, Keys.A);
@@ -76,20 +79,31 @@ namespace Pong2
             }
             if (active)
             {
-                timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
-                if (timeSinceLastFrame > msPerFrame)
+                ballTimeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
+                if (ballTimeSinceLastFrame > ballMsPerFrame)
                 {
-                    timeSinceLastFrame -= msPerFrame;
+                    ballTimeSinceLastFrame -= ballMsPerFrame;
                     ball.nextFrame();
                 }
-                ball.Move(lPad, rPad);
+                ball.Move(lPad, rPad, gameTime.TotalGameTime);
                 rPad.CheckMove(kb);
                 lPad.CheckMove(kb);
+                lPad.checkEndBounceAnimation(gameTime.TotalGameTime);
+                rPad.checkEndBounceAnimation(gameTime.TotalGameTime);
             }
 
             if (active == true && ball.IsEnd(lPad, rPad))
             {
                 EndGame();
+            }
+            if(ball.isExplosionStarted())
+            {
+                explosionTimeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
+                if (explosionTimeSinceLastFrame > explosionMsPerFrame)
+                {
+                    explosionTimeSinceLastFrame -= explosionMsPerFrame;
+                    ball.explosionNextFrame();
+                }
             }
 
             base.Update(gameTime);
