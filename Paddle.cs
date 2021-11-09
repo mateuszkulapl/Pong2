@@ -121,9 +121,12 @@ namespace Pong2
         }
         public void checkEndBounceAnimation(TimeSpan totalGameTime)
         {
-            Console.WriteLine("started "+ this.bounceAnimationStartTime.TotalMilliseconds+" current"+ totalGameTime.TotalMilliseconds+"  : ");
-            if (totalGameTime.TotalMilliseconds - this.bounceAnimationStartTime.TotalMilliseconds < animationTime)
-                this.bounced = false;
+            if (bounced)
+            {
+                Console.WriteLine("started " + this.bounceAnimationStartTime.TotalMilliseconds + " current" + totalGameTime.TotalMilliseconds + "  : ");
+                if ((totalGameTime.TotalMilliseconds - this.bounceAnimationStartTime.TotalMilliseconds )> animationTime)
+                    this.bounced = false;
+            }
         }
 
     }
