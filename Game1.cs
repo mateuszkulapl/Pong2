@@ -28,10 +28,10 @@ namespace Pong2
         private Ball ball;
         bool active = false;
         int ballTimeSinceLastFrame = 0;
-        const int ballMsPerFrame = 50;
+        const int ballMsPerFrame = 200;
 
         int explosionTimeSinceLastFrame = 0;
-        const int explosionMsPerFrame = 50;
+        const int explosionMsPerFrame = 200;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -96,8 +96,9 @@ namespace Pong2
             {
                 EndGame();
             }
-            if(ball.isExplosionStarted())
+            if (ball.isExplosionStarted())
             {
+                ball.Move();
                 explosionTimeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
                 if (explosionTimeSinceLastFrame > explosionMsPerFrame)
                 {
@@ -143,9 +144,23 @@ namespace Pong2
 
         private void drawResult(SpriteBatch _spriteBatch)
         {
-            string result = lPad.GetPoints() + ":" + rPad.GetPoints();
-            Vector2 resultSize = font.MeasureString(result);
-            _spriteBatch.DrawString(font, result, new Vector2(GraphicsDevice.Viewport.Width / 2 - resultSize.X / 2, 0), Color.White);
+            int yPadding = 10;
+
+            string lResult = lPad.GetPoints() + "";
+            Vector2 lResultSize = font.MeasureString(lResult);
+
+
+            string rResult = rPad.GetPoints() + "";
+            Vector2 rResultSize = font.MeasureString(rResult);
+
+            string resultsDivider = ":";
+            Vector2 resultsDividerSize = font.MeasureString(resultsDivider);
+
+            int padding = 10;
+
+            _spriteBatch.DrawString(font, lResult, new Vector2(GraphicsDevice.Viewport.Width / 2 - lResultSize.X - resultsDividerSize.X / 2 - padding, yPadding), Color.White);
+            _spriteBatch.DrawString(font, resultsDivider, new Vector2(GraphicsDevice.Viewport.Width / 2 - resultsDividerSize.X, yPadding), Color.White);
+            _spriteBatch.DrawString(font, rResult, new Vector2(GraphicsDevice.Viewport.Width / 2 + resultsDividerSize.X / 2 + padding, yPadding), Color.White);
         }
     }
 }

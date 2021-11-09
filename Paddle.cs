@@ -35,8 +35,11 @@ namespace Pong2
         }
         private void resetPosition()
         {
-            int width = 5;
+           
             int height = 100;
+
+            int width = texture.Height /100* texture.Width;
+
             int gap = 10;
             if (side == Side.Left)
             {
@@ -79,10 +82,10 @@ namespace Pong2
         }
         internal void Draw(SpriteBatch spriteBatch)
         {
-            if(this.bounced==false)
-            spriteBatch.Draw(texture, screenPosition, Color.White);
+            if (this.bounced == false)
+                spriteBatch.Draw(texture, screenPosition, Color.White);
             else
-            spriteBatch.Draw(texture, screenPosition, Color.Yellow);
+                spriteBatch.Draw(texture, screenPosition, Color.Yellow);
         }
 
         public void CheckMove(KeyboardState kb)
@@ -124,7 +127,7 @@ namespace Pong2
             if (bounced)
             {
                 //Console.WriteLine("started " + this.bounceAnimationStartTime.TotalMilliseconds + " current" + totalGameTime.TotalMilliseconds + "  : ");
-                if ((totalGameTime.TotalMilliseconds - this.bounceAnimationStartTime.TotalMilliseconds )> animationTime)
+                if ((totalGameTime.TotalMilliseconds - this.bounceAnimationStartTime.TotalMilliseconds) > animationTime)
                     this.bounced = false;
             }
         }
