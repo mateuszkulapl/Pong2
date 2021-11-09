@@ -36,7 +36,7 @@ namespace Pong2
             this.sheetSize = ballSheetSize;
             this.frameSize = new Point(texture.Width / sheetSize.X, texture.Height / sheetSize.Y);
             this.currentFrame = new Point(0, 0);
-            this.ballMargin = new Vector2(frameSize.X / 5, frameSize.Y / 5);
+            this.ballMargin = new Vector2(10, 10);
 
 
             //explosion
@@ -236,6 +236,8 @@ namespace Pong2
             float yOffset = rightPos.Y - leftPos.Y;
             float xOffset = rightPos.X - leftPos.X;
 
+            float speedYstep = 2;
+            float speedY = -2 * speedYstep;
 
             if (paddle.GetSide() == Side.Right)
             {
@@ -249,6 +251,20 @@ namespace Pong2
                     {
                         position.X = paddle.GetScreenPosition().X - r;
                         position.Y = onPaddleY;
+
+
+                        //set speed.Y
+                        Point ballPositionForSection = new Point(paddle.GetScreenPosition().X, (int)onPaddleY);
+                        for (int i = 0; i < 5; i++)
+                        {
+                            int sectionHeight = paddleScreenPositionWithOffset.Height / 5;
+                            if (new Rectangle(paddleScreenPositionWithOffset.X, paddleScreenPositionWithOffset.Y+i* sectionHeight, paddleScreenPositionWithOffset.Width, sectionHeight).Contains(ballPositionForSection))
+                            {
+                                speed.Y = speedY;
+                            }
+                            speedY += speedYstep;
+                            Console.WriteLine("speed:"+speed);
+                        }
                         return true;
                     }
                     return false;
@@ -269,6 +285,22 @@ namespace Pong2
                     {
                         position.X = paddle.GetScreenPosition().X + paddle.GetScreenPosition().Width + r;
                         position.Y = onPaddleY;
+
+
+                        //set speed.Y
+                        Point ballPositionForSection = new Point(paddle.GetScreenPosition().X, (int)onPaddleY);
+                        for (int i = 0; i < 5; i++)
+                        {
+                            int sectionHeight = paddleScreenPositionWithOffset.Height / 5;
+                            if (new Rectangle(paddleScreenPositionWithOffset.X, paddleScreenPositionWithOffset.Y + i * sectionHeight, paddleScreenPositionWithOffset.Width, sectionHeight).Contains(ballPositionForSection))
+                            {
+                                speed.Y = speedY;
+                            }
+                            speedY += speedYstep;
+                            Console.WriteLine("speed:" + speed);
+                        }
+
+
                         return true;
                     }
                     return false;
